@@ -1,9 +1,15 @@
 package com.coverage.models;
 
+import com.coverage.distance.EuclidDistance;
+import com.coverage.distance.IDistance;
+import com.coverage.main.KM;
+
 public class Point {
+	public TypeOfPoint TYPE = TypeOfPoint.NONE;
+	
     private double x;
     private double y;
-
+    
     public Point(double x, double y) {
     	setX(x);
     	setY(y);
@@ -42,5 +48,16 @@ public class Point {
     	}
     	
     	return false;
+    }
+    
+    /**
+     * Returns whether a point covers a point
+     * @param s
+     * @param t
+     * @return boolean
+     */
+    public boolean isCoverage(Point p){
+    	IDistance distance = new EuclidDistance();
+        return distance.caculate(p,this) <= KM.RS + 0.00000001;
     }
 }

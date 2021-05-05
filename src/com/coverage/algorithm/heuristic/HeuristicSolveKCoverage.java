@@ -8,19 +8,23 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import com.coverage.algorithm.Algorithms;
+import com.coverage.algorithm.support.Djikstra;
 import com.coverage.algorithm.support.EquationCircle;
 import com.coverage.distance.EuclidDistance;
 import com.coverage.distance.IDistance;
 import com.coverage.main.KM;
+import com.coverage.models.Point;
 import com.coverage.models.Relay;
 import com.coverage.models.Sensor;
 import com.coverage.models.Target;
 
 public class HeuristicSolveKCoverage implements Algorithms{
-	private IDistance distance = new EuclidDistance();
+	private IDistance distance = 
+			new EuclidDistance();
 	private SensorGeneration sensorGeneration = new SensorGeneration();
 	private Set<Target> targets;
 	
@@ -34,26 +38,46 @@ public class HeuristicSolveKCoverage implements Algorithms{
 	 * @return
 	 */
 	@Override
-    public void run(Set<Sensor> resultSensors, Set<Relay> resultRelays){
-    	// phase 1
+    public void run(List<Sensor> resultSensors, List<Relay> resultRelays){ 
+    	// phase 1, result of phase1 is list of sensors was satisfy k coverage
         Set<Sensor> sensors = buildSensor(targets);
         HashMap<Sensor, Integer> mapWS = weightOfSensor(sensors, targets);
         LinkedHashMap<Sensor, Integer> sortedMap = sortHashMapByValue(mapWS);
-        Set<Sensor> results = optimalSensor(sortedMap, targets);
-
-        // phase 2 
-        // ...
+        sensors = optimalSensor(sortedMap, targets);
         
-        // add result sensors
+        List<Sensor> results = new ArrayList<Sensor>(sensors);		// convert from set to list -end phase 1-
+        
+        // phase 2, result of phase2 is list of relays
+        Map<Integer, List<Integer>> path = findMinPathToBase(results);
+        Set<Integer> keySets = path.keySet();
+        
+        for(int key : keySets) {
+        	List<Integer> list = path.get(key);
+        	list.forEach(l -> System.out.print(l + " "));
+        	System.out.println();
+        }
+        
+        System.out.println("\n-----------------\n");
+        
+        path = checkConstraintConnectivity(path, results);
+        keySets = path.keySet();
+        
+        for(int key : keySets) {
+        	List<Integer> list = path.get(key);
+        	list.forEach(l -> System.out.print(l + " "));
+        	System.out.println();
+        }
+        
+        // add result sensors and result relays
         resultSensors.addAll(results);
+        //resultRelays.addAll(results);
         
-        // add result relays
-//        resultRelays.addAll(results);
+//        
     }
 	
 	/**
 	 * Phase 1, Step 1 :
-	 * Build list sensor with k coverage
+	 * Build list sensor with k coverage (no optimal)
 	 * 
 	 * @param targets
 	 * @return
@@ -126,7 +150,7 @@ public class HeuristicSolveKCoverage implements Algorithms{
 	 * @param targets
 	 * @return
 	 */
-    public static Set<Sensor> optimalSensor(LinkedHashMap<Sensor, Integer> sensors, Set<Target> targets){
+    public Set<Sensor> optimalSensor(LinkedHashMap<Sensor, Integer> sensors, Set<Target> targets){
         //Set<Map.Entry<Sensor, Integer>> sortedSensor= sensors.entrySet();
         HashMap<Target, Integer> mapTarget = new HashMap<>();
         Set<Target> checkMapTarget = new HashSet<>();
@@ -152,9 +176,95 @@ public class HeuristicSolveKCoverage implements Algorithms{
         return sensorSet;
     }
     
+    /**
+     * Phase 2 : 
+     * Build full graph from list sensors satisfy k coverage optimal and base station
+     * calculate minimum path from each sensor to base
+     * and return list sensor on the path from each sensor to base
+     * @param listSensors
+     * @return
+     */
+    public Map<Integer, List<Integer>> findMinPathToBase(List<Sensor> listSensors) {
+    	List<Point> listPoints = new ArrayList<Point>(listSensors);
+    	listPoints.add(KM.BASE);    	
+    	
+    	Map<Integer, Integer> trace = new Djikstra(listPoints).trace;
+    	int base_id = listPoints.size()-1;
+    	
+    	Map<Integer, List<Integer>> path = new HashMap<Integer, List<Integer>>();
+     	for(int i=0; i<listPoints.size()-1; i++) {
+     		int now = i;		
+    		List<Integer> list = new ArrayList<Integer>();
+    		list.add(now);
+    		while(now != base_id) {
+    			now = trace.get(now);
+    			list.add(now);
+    		}
+    		
+    		path.put(i, list);
+    	}
+    	
+    	return path;
+    }
+    
+    /**
+     * Method check if two sensor coverage same target, see they cann't same path
+     * @return
+     */
+    public Map<Integer, List<Integer>> checkConstraintConnectivity(Map<Integer, List<Integer>> path, List<Sensor> sensors) {
+    	int lens = sensors.size();
+    	for(int i=1; i<lens; i++) {
+//    		for(int j=0; j<lens; j++) {
+//    			if(sensors.get(i).sameCoverage(sensors.get(j))) {	// coverage same target
+//    				List<Integer> list_i = path.get(i);
+//    				List<Integer> list_j = path.get(j);
+//    				
+//    				List<Integer> inters = 
+//    						list_i.stream().distinct().filter(list_j::contains).collect(Collectors.toList());
+//    				
+//    				if(inters.size() > 1) {
+//    					return false;
+//    				}
+//    			}
+//    		}
+    		
+    		List<Integer> listCannotInPath = new ArrayList<Integer>(); // list point cann't in this path of node i
+    		for(int j=0; j<=i; j++) {
+    			if(sensors.get(i).sameCoverage(sensors.get(j))) {
+    				listCannotInPath.addAll(path.get(j).subList(1, path.get(j).size()-1)); 
+    			}
+    		}
+    		
+    		for(int id=0; id<path.get(i).size(); id++) {
+    			if(listCannotInPath.contains(path.get(i).get(id))) {
+    				Random rand = new Random();
+    				int n_id = rand.nextInt(lens);
+    				
+    				while(listCannotInPath.contains(n_id)) {
+    					n_id = rand.nextInt(lens);
+    				}
+    				
+    				path.get(i).set(id, n_id);
+    			}
+    		}
+    	}
+    	
+    	return path;
+    }
+    
+    /**
+     * hash two integer
+     * @param a
+     * @param b
+     * @return
+     */
+    public int hash(int a, int b) {
+    	return a + b * 127;
+    }
+    
 	/**
 	 * The method return number of intersection of two circle
-	 * 
+	 * for phase 1
 	 * @param t1
 	 * @param t2
 	 * @return
@@ -212,7 +322,7 @@ public class HeuristicSolveKCoverage implements Algorithms{
 
 	/**
 	 * Calculates the weight or the number of targets that each sensor covers
-	 * 
+	 * for phase 1
 	 * @param sensors
 	 * @param targets
 	 * @return
@@ -230,5 +340,4 @@ public class HeuristicSolveKCoverage implements Algorithms{
 		}
 		return mapWS;
 	}
-
 }

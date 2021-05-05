@@ -7,7 +7,7 @@ public class Demo {
         KM km = new KM();
         km.run();
         
-        Show.print(km.getSensors());
-        Show.print(km.getRelays());
+        Show.printList(km.getSensors());
+        Show.printList(km.getRelays());
     }
 }
