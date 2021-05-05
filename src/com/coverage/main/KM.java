@@ -19,7 +19,7 @@ public class KM {
     public static double RC = 20; 				// connection transmission radius
     public static double RS = 5; 				// coverage radius
     public static int K = 3; 					// constraint coverage
-    public static Base BASE = new Base(50, 50); // base station
+    public static Base BASE = new Base(5, 8); // base station
     public static Set<Target> TARGETS; 			// list input target
     public static double ANPHA = 0.4; 			// weigh of relay
     public static double BETA = 0.6; 			// weigh of sensor

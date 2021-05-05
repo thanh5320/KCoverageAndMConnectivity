@@ -12,7 +12,7 @@ import java.util.Random;
 import java.util.Set;
 
 import com.coverage.algorithm.Algorithms;
-import com.coverage.algorithm.support.Djikstra;
+import com.coverage.algorithm.support.Dijkstra;
 import com.coverage.algorithm.support.EquationCircle;
 import com.coverage.distance.EuclidDistance;
 import com.coverage.distance.IDistance;
@@ -188,8 +188,14 @@ public class HeuristicSolveKCoverage implements Algorithms{
     	List<Point> listPoints = new ArrayList<Point>(listSensors);
     	listPoints.add(KM.BASE);    	
     	
-    	Map<Integer, Integer> trace = new Djikstra(listPoints).trace;
+    	Map<Integer, Integer> trace = new Dijkstra(listPoints).trace;
     	int base_id = listPoints.size()-1;
+    	
+//    	Set<Integer> keySets = trace.keySet();
+//    	for(int key : keySets) {
+//    		System.out.println(key + " " + trace.get(key));
+//    	}
+//    	System.out.println("\n-----------------\n");
     	
     	Map<Integer, List<Integer>> path = new HashMap<Integer, List<Integer>>();
      	for(int i=0; i<listPoints.size()-1; i++) {

@@ -16,33 +16,57 @@ import com.coverage.models.Target;
  * calculate and return distance minimum between each point with base station
  *
  */
-public class Djikstra {
+public class Dijkstra {
 	private Map<Integer, List<Integer>> adj; 	// adjacency list graph
 	List<Point> listPoints; 					// list point in graph
 	public Map<Integer, Integer> trace; 		// previous node 
 	private boolean[] mark;						// mark point in priority queue
 	private double[] dist;						// distance between point i with base station
 	
-	public Djikstra(List<Point> listPoints) {
+	public Dijkstra(List<Point> listPoints) {
 		trace = new HashMap<Integer, Integer>();
 		adj = new HashMap<Integer, List<Integer>>();
 		this.listPoints = listPoints;
 
+		int base_id = listPoints.size() - 1; 
+		
 		// initialization adjacency
 		// build fully graph with list point, each edge adjacent with all edge other
 		// so that, two point no coverage same target (function checkSensorGroup will check this constraint) 
 		for(int i=0; i<listPoints.size(); i++) {
     		List<Integer> list = new ArrayList<Integer>();
-    		for(int j=0; j<listPoints.size(); j++) {
-    			if(j != i && !checkSensorGroup(listPoints.get(i), listPoints.get(j))) {
-    				list.add(j);
+//    		if(i==0) {
+//    			for(int j=0; j<listPoints.size(); j++) {
+//    				if(j != i && j != base_id) {
+//    					list.add(j);
+//    				}
+//    			}
+//    			
+//    			adj.put(i, list);
+//    			continue;
+//    		}
+//    		
+    		if(i == base_id) { // if point i is base, add all other node to adjacency of node i
+    			for(int j=0; j<listPoints.size(); j++) {
+    				if(j != i /*&& j != 0*/) {
+    					list.add(j);
+    				}
     			}
+    		} else {
+    			for(int j=0; j<listPoints.size(); j++) {
+    				if(j == base_id) { // base adjacency all other node in graph
+    					list.add(j);
+    				} else { 
+    					if(j != i && !checkSensorGroup(listPoints.get(i), listPoints.get(j))) {
+            				list.add(j);
+            			}
+    				}
+        		}
     		}
     		
     		adj.put(i, list);
     	}
 		
-		int base_id = listPoints.size() - 1;
 		dist = new double[listPoints.size()]; 			// dist[u] = distance(u, base)
 		mark = new boolean[listPoints.size()]; 			// mark point in priority queue, mark[i] = true => point i in priority queue
 		for(int i=0; i<listPoints.size(); i++) {
@@ -51,7 +75,7 @@ public class Djikstra {
 		}
 		dist[base_id] = 0;
 		
-		// Dijikstra algorithms
+		// Dijkstra algorithms
 		while(!isEmpty()) {
 			int u = deletemin();
 			List<Integer> listEdge = adj.get(u);
@@ -62,7 +86,7 @@ public class Djikstra {
 				}
 			}
 		}
-		
+
 	}
 	
 	/* method same with check empty for priority queue H
