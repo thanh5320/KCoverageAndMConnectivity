@@ -34,7 +34,7 @@ public class HeuristicSolveKCoverage implements Algorithms{
 	}
 	
 	/**
-	 * Main heuristic algorithms
+	 * Run algorithms
 	 */
 	@Override
     public void run(List<Sensor> resultSensors, List<Relay> resultRelays){ 
