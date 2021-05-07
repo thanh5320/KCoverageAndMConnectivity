@@ -15,8 +15,6 @@ public class Sensor extends Relay {
     
     /**
      * Check a sensor have coverage same target with this object
-     * @param sensor
-     * @return
      */
     public boolean sameCoverage(Sensor sensor) {
     	Set<Target> targets = KM.TARGETS;

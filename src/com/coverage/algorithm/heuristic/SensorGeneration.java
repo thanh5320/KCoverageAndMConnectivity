@@ -9,11 +9,6 @@ import com.coverage.models.Target;
 public class SensorGeneration {
 	/**
 	 * A method add sensor for 2 targets: in case there are 2 intersecting points
-	 * @param t1
-	 * @param t2
-	 * @param s1
-	 * @param s2
-	 * @return
 	 */
 	public Sensor compute(Target t1, Target t2, Sensor s1, Sensor s2) {
 		double x0 = s1.getX() > s2.getX() ? s2.getX() : s1.getX();
@@ -60,8 +55,6 @@ public class SensorGeneration {
 	/**
 	 * The method find additional sensor coverage for a target: used in cases where there is no intersection 
 	 * or there is 1 intersection
-	 * @param t
-	 * @return
 	 */
 	public Sensor compute(Target t) {
 		double x0 = t.getX() - KM.RS;

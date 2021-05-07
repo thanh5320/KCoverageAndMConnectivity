@@ -16,10 +16,10 @@ import com.coverage.models.Target;
 
 public class KM {
     // problem parameters
-    public static double RC = 20; 				// connection transmission radius
-    public static double RS = 5; 				// coverage radius
+    public static double RC = 50; 				// connection transmission radius
+    public static double RS = 40; 				// coverage radius
     public static int K = 3; 					// constraint coverage
-    public static Base BASE = new Base(5, 5); // base station
+    public static Base BASE = new Base(10, 10); // base station
     public static Set<Target> TARGETS; 			// list input target
     public static double ANPHA = 0.4; 			// weigh of relay
     public static double BETA = 0.6; 			// weigh of sensor
@@ -37,8 +37,6 @@ public class KM {
     
     /**
      * Read input target
-     * @param url
-     * @return
      */
     public static Set<Target> readFileTarget(){
         Set<Target> targets = new HashSet<>();
@@ -54,7 +52,7 @@ public class KM {
             String line = reader.readLine();
             while(line!=null){
                 String[] s = line.split(" ");
-                targets.add(new Target(Integer.parseInt(s[0]), Integer.parseInt(s[1])));
+                targets.add(new Target(Double.parseDouble(s[0]), Double.parseDouble(s[1])));
                 line=reader.readLine();
             }
         } catch (IOException e) {

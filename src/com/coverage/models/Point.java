@@ -52,9 +52,6 @@ public class Point {
     
     /**
      * Returns whether a point covers a point
-     * @param s
-     * @param t
-     * @return boolean
      */
     public boolean isCoverage(Point p){
     	IDistance distance = new EuclidDistance();

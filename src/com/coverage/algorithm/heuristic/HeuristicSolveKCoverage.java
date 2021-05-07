@@ -34,9 +34,7 @@ public class HeuristicSolveKCoverage implements Algorithms{
 	}
 	
 	/**
-	 * Run algorithms
-	 * @param url
-	 * @return
+	 * Main heuristic algorithms
 	 */
 	@Override
     public void run(List<Sensor> resultSensors, List<Relay> resultRelays){ 
@@ -148,9 +146,6 @@ public class HeuristicSolveKCoverage implements Algorithms{
 	/**
 	 * Phase 1, Step 1 :
 	 * Build list sensor with k coverage (no optimal)
-	 * 
-	 * @param targets
-	 * @return
 	 */
 	public Set<Sensor> buildSensor(Set<Target> targets) {
 		Set<Sensor> sennors = new HashSet<>();
@@ -216,9 +211,6 @@ public class HeuristicSolveKCoverage implements Algorithms{
 	/**
 	 * Phase 1, Step 2 : 
 	 * Return Optimal set of sensor in phase 1
-	 * @param sensors
-	 * @param targets
-	 * @return
 	 */
     public Set<Sensor> optimalSensor(LinkedHashMap<Sensor, Integer> sensors, Set<Target> targets){
         //Set<Map.Entry<Sensor, Integer>> sortedSensor= sensors.entrySet();
@@ -251,8 +243,6 @@ public class HeuristicSolveKCoverage implements Algorithms{
      * Build full graph from list sensors satisfy k coverage optimal and base station
      * calculate minimum path from each sensor to base
      * and return list sensor on the path from each sensor to base
-     * @param listSensors
-     * @return
      */
     public Map<Integer, List<Integer>> findMinPathToBase(List<Sensor> listSensors) {
     	List<Point> listPoints = new ArrayList<Point>(listSensors);
@@ -285,7 +275,6 @@ public class HeuristicSolveKCoverage implements Algorithms{
     
     /**
      * Method check if two sensor coverage same target, see they cann't same path
-     * @return
      */
     public Map<Integer, List<Integer>> checkConstraintConnectivity(Map<Integer, List<Integer>> path, List<Sensor> sensors) {
     	int lens = sensors.size();
@@ -332,9 +321,6 @@ public class HeuristicSolveKCoverage implements Algorithms{
     
     /**
      * hash two integer
-     * @param a
-     * @param b
-     * @return
      */
     public int hash(int a, int b) {
     	return a + b * 127127127;
@@ -343,9 +329,6 @@ public class HeuristicSolveKCoverage implements Algorithms{
 	/**
 	 * The method return number of intersection of two circle
 	 * for phase 1
-	 * @param t1
-	 * @param t2
-	 * @return
 	 */
 	public List<Sensor> intersection(Target t1, Target t2) {
 		List<Sensor> sensors = new ArrayList<>();
@@ -371,8 +354,6 @@ public class HeuristicSolveKCoverage implements Algorithms{
 
 	/**
 	 * Sort with weight of sensor coverage target
-	 * @param hashMap
-	 * @return
 	 */
     public static LinkedHashMap<Sensor, Integer> sortHashMapByValue(HashMap<Sensor, Integer> hashMap){
         Set<Map.Entry<Sensor, Integer>> entries = hashMap.entrySet();
@@ -401,9 +382,6 @@ public class HeuristicSolveKCoverage implements Algorithms{
 	/**
 	 * Calculates the weight or the number of targets that each sensor covers
 	 * for phase 1
-	 * @param sensors
-	 * @param targets
-	 * @return
 	 */
 	public HashMap<Sensor, Integer> weightOfSensor(Set<Sensor> sensors, Set<Target> targets) {
 		HashMap<Sensor, Integer> mapWS = new HashMap<Sensor, Integer>();

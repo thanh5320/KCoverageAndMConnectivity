@@ -12,9 +12,6 @@ public class Target extends  Point{
 
     /**
      * Returns whether a sensor covers a target
-     * @param s
-     * @param t
-     * @return boolean
      */
     public boolean isCoverage(Sensor s){
     	IDistance distance = new EuclidDistance();
