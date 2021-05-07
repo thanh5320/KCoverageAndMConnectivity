@@ -76,6 +76,8 @@ public class HeuristicSolveKCoverage implements Algorithms{
 //        	System.out.println(" : " + costOnePath(list, results, distance));
         	System.out.println();        	
         }
+        
+        System.out.println("\nNumber of Sensor : " + results.size());
         System.out.println("Cost : " + cost(path, results));
         
         // add result sensors and result relays
@@ -302,13 +304,22 @@ public class HeuristicSolveKCoverage implements Algorithms{
     		
     		for(int id=1; id<path.get(i).size()-1; id++) {
     			if(listCannotInPath.contains(path.get(i).get(id))) {
-    				Random rand = new Random();
-    				int n_id = rand.nextInt(lens);
+    				int n_id = 0;
     				
-    				while(listCannotInPath.contains(n_id) 
-    						|| !sensors.get(n_id).sameCoverage(sensors.get(path.get(i).get(id)))) {
-    					n_id = rand.nextInt(lens);
-    					
+//    				Random rand = new Random();
+//    				n_id = rand.nextInt(lens);
+//    				
+//    				while(listCannotInPath.contains(n_id) 
+//    						|| !sensors.get(n_id).sameCoverage(sensors.get(path.get(i).get(id)))) {
+//    					n_id = rand.nextInt(lens);
+//    					
+//    				}
+    				
+    				for(int r=0; r<lens; r++) {
+    					n_id = r;
+    					if(!listCannotInPath.contains(n_id) && sensors.get(n_id).sameCoverage(sensors.get(path.get(i).get(id)))) {
+    						break;
+    					}
     				}
     				
     				path.get(i).set(id, n_id);
