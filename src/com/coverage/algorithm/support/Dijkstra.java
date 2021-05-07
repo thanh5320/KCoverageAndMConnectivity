@@ -80,7 +80,7 @@ public class Dijkstra {
 			int u = deletemin();
 			List<Integer> listEdge = adj.get(u);
 			for(int edge : listEdge) {
-				if(dist[edge] > dist[u] + l_distance(u, edge)) {
+				if(dist[edge] > dist[u] /*+ l_distance(u, edge)*/) {
 					dist[edge] = dist[u] + l_distance(u, edge);
 					trace.put(edge, u);
 				}

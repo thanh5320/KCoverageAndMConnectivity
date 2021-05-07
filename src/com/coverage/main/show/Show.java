@@ -12,6 +12,6 @@ public class Show {
 		}
 		
 		System.out.println("size of LIST is : " + list.size() + "\n");
-		System.out.println("------------");
+		System.out.println("------------\n");
 	}
 }

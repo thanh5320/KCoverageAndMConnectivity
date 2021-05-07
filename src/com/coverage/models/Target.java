@@ -18,6 +18,7 @@ public class Target extends  Point{
      */
     public boolean isCoverage(Sensor s){
     	IDistance distance = new EuclidDistance();
+    	
         return distance.caculate(s,this) <= KM.RS + 0.00000001;
     }
     
