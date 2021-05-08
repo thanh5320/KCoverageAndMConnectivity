@@ -7,7 +7,6 @@ public class EuclidDistance implements IDistance{
 	public double caculate(Point a, Point b) {
 		double x = a.getX()-b.getX();
         double y = a.getY()-b.getY();
-        
         return Math.sqrt(x*x+y*y);
 	}
 }

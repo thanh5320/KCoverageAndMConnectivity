@@ -16,7 +16,16 @@ public class SensorGeneration {
 		Random rd = new Random();
 		Double nrd = rd.nextDouble();
 		double x = x0 + nrd * Math.abs(s1.getX() - s2.getX());
-		
+		if(x==x0){
+			double yMin;
+			if (s1.getY() > s2.getY()) {
+				yMin = s2.getY();
+			} else {
+				yMin = s1.getY();
+			}
+			double y = rd.nextDouble()*Math.abs(s1.getY() - s2.getY())+yMin;
+			return new Sensor(x,y);
+		}
 		if (rd.nextBoolean()) {
 			double yMax;
 			double yMin;
@@ -26,6 +35,10 @@ public class SensorGeneration {
 			} else {
 				yMax = s2.getY();
 				yMin = s1.getY();
+			}
+			if(yMax==yMin){
+				double y= yMax;
+				return new Sensor(x, y);
 			}
 			double y = Math.sqrt(KM.RS * KM.RS - (x - t1.getX()) * (x - t1.getX())) + t1.getY();
 			if (y <= yMax && y >= yMin) {
@@ -42,6 +55,10 @@ public class SensorGeneration {
 			} else {
 				yMax = s2.getY();
 				yMin = s1.getY();
+			}
+			if(yMax==yMin){
+				double y= yMax;
+				return new Sensor(x, y);
 			}
 			double y = Math.sqrt(KM.RS * KM.RS - (x - t2.getX()) * (x - t2.getX())) + t2.getY();
 			if (y <= yMax && y >= yMin) {

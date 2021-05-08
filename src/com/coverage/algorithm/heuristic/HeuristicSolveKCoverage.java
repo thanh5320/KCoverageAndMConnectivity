@@ -43,9 +43,7 @@ public class HeuristicSolveKCoverage implements Algorithms{
         HashMap<Sensor, Integer> mapWS = weightOfSensor(sensors, targets);
         LinkedHashMap<Sensor, Integer> sortedMap = sortHashMapByValue(mapWS);
         sensors = optimalSensor(sortedMap, targets);
-        
         List<Sensor> results = new ArrayList<Sensor>(sensors);		// convert from set to list -end phase 1-
-        
         // show result phase1
         System.out.println("List of sensor satisfy k coverage is : ");
         Show.printList(results);
@@ -344,6 +342,29 @@ public class HeuristicSolveKCoverage implements Algorithms{
 	public List<Sensor> intersection(Target t1, Target t2) {
 		List<Sensor> sensors = new ArrayList<>();
 		if (distance.caculate(t1, t2) < 2 * KM.RS) {
+			if(t1.getX()==t2.getX()){
+				double tmp1=t1.getX();
+				double tmp2=t1.getY();
+				double tmp3=t2.getY();
+				t1.setX(tmp2);
+				t1.setY(tmp1);
+				t2.setX(tmp3);
+				t2.setY(tmp1);
+				double a = EquationCircle.solveA(t1.getX(), t1.getY(), t2.getX(), t2.getY());
+				double b = EquationCircle.solveB(t1.getX(), t1.getY(), t2.getX(), t2.getY());
+				double c = EquationCircle.solveC(t1.getX(), t1.getY(), t2.getX(), t2.getY(), KM.RS);
+				List<Double> listY = EquationCircle.solveQuadraticEquations(a, b, c);
+
+				for (double y : listY) {
+					double x = EquationCircle.sloveX(y, t1.getX(), t1.getY(), t2.getX(), t2.getY());
+					sensors.add(new Sensor(y, x));
+				}
+				t1.setX(tmp1);
+				t1.setY(tmp2);
+				t2.setX(tmp1);
+				t2.setY(tmp3);
+				return sensors;
+			}
 			double a = EquationCircle.solveA(t1.getX(), t1.getY(), t2.getX(), t2.getY());
 			double b = EquationCircle.solveB(t1.getX(), t1.getY(), t2.getX(), t2.getY());
 			double c = EquationCircle.solveC(t1.getX(), t1.getY(), t2.getX(), t2.getY(), KM.RS);
