@@ -44,7 +44,7 @@ public class HeuristicSolveKCoverage implements Algorithms{
         HashMap<Sensor, Integer> mapWS = weightOfSensor(sensors, targets);
         LinkedHashMap<Sensor, Integer> sortedMap = sortHashMapByValue(mapWS);
         sensors = optimalSensor(sortedMap, targets);
-        /* check set sensor is coverage
+       /*// check set sensor is coverage
         for(Target t: targets){
 			int w=0;
 			for(Sensor s : sensors){
@@ -517,6 +517,7 @@ public class HeuristicSolveKCoverage implements Algorithms{
 		Set<Sensor> giao = new HashSet<>();
 		Sensor tmps = null;
 		if(list.size()>=2){
+			sensors.add(s);
 			for(int i=0;i<list.size()-1;i++){
 				for(int j=i+1;j<list.size();j++){
 					List<Sensor> listSensor = intersection(list.get(i), list.get(j));
@@ -535,21 +536,24 @@ public class HeuristicSolveKCoverage implements Algorithms{
 				if(s1.getX()==s.getX()&& s1.getY()==s.getY()) b=false;
 				if (b){
 					tmps=s1;
-					break;
+					sensors.add(s1);
 				}
 			}
+			double x0=tmps.getX()-s.getX();
+			double y0=tmps.getY()-s.getY();
+			Random rd = new Random();
+			while (sensors.size()<KM.K) {
+				double nrd = rd.nextDouble();
+				double x = s.getX() + x0 * nrd;
+				double y = s.getY() + y0 * nrd;
+				sensors.add(new Sensor(x,y));
+			}
 		}else {
-			tmps= new Sensor(list.get(0).getX(),list.get(0).getY());
-		}
-
-		double x0=tmps.getX()-s.getX();
-		double y0=tmps.getY()-s.getY();
-		Random rd = new Random();
-		while (sensors.size()<KM.K) {
-			double nrd = rd.nextDouble();
-			double x = s.getX() + x0 * nrd;
-			double y = s.getY() + y0 * nrd;
-			sensors.add(new Sensor(x,y));
+			sensors.add(s);
+			Target t= new Target(list.get(0).getX(), list.get(0).getY());
+			while(sensors.size()<KM.K){
+				sensors.add(sensorGeneration.compute(t));
+			}
 		}
 		return sensors;
 	}
