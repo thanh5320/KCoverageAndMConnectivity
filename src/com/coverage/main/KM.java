@@ -17,7 +17,7 @@ import com.coverage.models.Target;
 public class KM {
     // problem parameters
     public static double RC = 50; 				// connection transmission radius
-    public static double RS = 10; 				// coverage radius
+    public static double RS = 50; 				// coverage radius
     public static int K = 3; 					// constraint coverage
     public static Base BASE = new Base(5, 5); // base station
     public static Set<Target> TARGETS; 			// list input target

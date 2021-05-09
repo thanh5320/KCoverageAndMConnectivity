@@ -39,10 +39,20 @@ public class HeuristicSolveKCoverage implements Algorithms{
 	@Override
     public void run(List<Sensor> resultSensors, List<Relay> resultRelays){ 
     	// phase 1, result of phase1 is list of sensors was satisfy k coverage
-        Set<Sensor> sensors = buildSensor(targets);
+        //Set<Sensor> sensors = buildSensor(targets);
+		Set<Sensor> sensors = buildSensor2(targets);
         HashMap<Sensor, Integer> mapWS = weightOfSensor(sensors, targets);
         LinkedHashMap<Sensor, Integer> sortedMap = sortHashMapByValue(mapWS);
         sensors = optimalSensor(sortedMap, targets);
+        /* check set sensor is coverage
+        for(Target t: targets){
+			int w=0;
+			for(Sensor s : sensors){
+				if(t.isCoverage(s)) w++;
+			}
+			System.out.println(w);
+		}
+        */
         List<Sensor> results = new ArrayList<Sensor>(sensors);		// convert from set to list -end phase 1-
         // show result phase1
         System.out.println("List of sensor satisfy k coverage is : ");
@@ -427,5 +437,182 @@ public class HeuristicSolveKCoverage implements Algorithms{
 			mapWS.put(s, w);
 		}
 		return mapWS;
+	}
+
+	// pha 1 mới
+	public Set<Sensor> generateSensor1(Set<Target> targets) {
+		Set<Sensor> sennors = new HashSet<>();
+		List<Target> targetList = new ArrayList<>();
+		targetList.addAll(targets);
+		for (int i = 0; i < targetList.size() - 1; i++) {
+			for (int j = i + 1; j < targetList.size(); j++) {
+				List<Sensor> listSensor = intersection(targetList.get(i), targetList.get(j));
+				if (listSensor!=null) {
+					sennors.addAll(listSensor);
+				}
+			}
+		}
+
+		for(Target t : targets){
+			while(true){
+				Sensor s = sensorGeneration.compute(t);
+				if(!sennors.contains(s)){
+					sennors.add(s);
+					break;
+				}
+			}
+		}
+
+		return sennors;
+	}
+
+	public LinkedHashMap<Sensor, List<Target>> generateMap(Set<Sensor> sensors){
+		List<Target> targets=new ArrayList<>();
+		targets.addAll(this.targets);
+		LinkedHashMap<Sensor, List<Target>> map = new LinkedHashMap<>();
+		for(Sensor sensor: sensors){
+			List<Target> targetList = new ArrayList<>();
+			for(Target target : targets){
+				if(target.isCoverage(sensor)){
+					targetList.add(target);
+				}
+			}
+			map.put(sensor, targetList);
+		}
+		return map;
+	}
+
+	public LinkedHashMap<Sensor, List<Target>> sortMap(LinkedHashMap<Sensor, List<Target>> hashMap){
+		Set<Map.Entry<Sensor, List<Target>>> entries = hashMap.entrySet();
+
+		Comparator<Map.Entry<Sensor, List<Target>>> comparator = new Comparator<Map.Entry<Sensor, List<Target>>>() {
+			@Override
+			public int compare(Map.Entry<Sensor, List<Target>> e1, Map.Entry<Sensor, List<Target>> e2) {
+				int v1 = e1.getValue().size();
+				int v2 = e2.getValue().size();
+				if(v1==v2) return 0;
+				else if( v1>v2) return -1;
+				else return 1;
+			}
+		};
+
+		List<Map.Entry<Sensor, List<Target>>> listEntries = new ArrayList<>(entries);
+		Collections.sort(listEntries, comparator);
+		LinkedHashMap<Sensor, List<Target>> sortedMap = new LinkedHashMap<>(listEntries.size());
+		for (Map.Entry<Sensor, List<Target>> entry : listEntries) {
+			sortedMap.put(entry.getKey(), entry.getValue());
+		}
+
+		return sortedMap;
+	}
+
+	public boolean isMidPoint(Sensor s, Target t1, Target t2){
+		if(distance.caculate(s, t1)+distance.caculate(s, t2)==distance.caculate(t1, t2)) return true;
+		return false;
+	}
+
+
+	public Set<Sensor> generateKSensor(Sensor s, List<Target> list){
+		Set<Sensor> sensors = new HashSet<>();
+		Set<Sensor> giao = new HashSet<>();
+		Sensor tmps = null;
+		if(list.size()>=2){
+			for(int i=0;i<list.size()-1;i++){
+				for(int j=i+1;j<list.size();j++){
+					List<Sensor> listSensor = intersection(list.get(i), list.get(j));
+					if (listSensor!=null) {
+						giao.addAll(listSensor);
+					}
+				}
+			}
+			for(Sensor s1: giao){
+				boolean b = true;
+				for(Target t : list){
+					if(!t.isCoverage(s1)){
+						b=false;
+					}
+				}
+				if(s1.getX()==s.getX()&& s1.getY()==s.getY()) b=false;
+				if (b){
+					tmps=s1;
+					break;
+				}
+			}
+		}else {
+			tmps= new Sensor(list.get(0).getX(),list.get(0).getY());
+		}
+
+		double x0=tmps.getX()-s.getX();
+		double y0=tmps.getY()-s.getY();
+		Random rd = new Random();
+		while (sensors.size()<KM.K) {
+			double nrd = rd.nextDouble();
+			double x = s.getX() + x0 * nrd;
+			double y = s.getY() + y0 * nrd;
+			sensors.add(new Sensor(x,y));
+		}
+		return sensors;
+	}
+
+	public Set<Sensor> generateSensor2(LinkedHashMap<Sensor, List<Target>> map){
+		Set<Sensor> sensors = new HashSet<>();
+		Sensor removeSensor=null;
+		List<Target> removeTarget = new ArrayList<>();
+		boolean b;
+		while (map.size()>0){
+			map=sortMap(map);
+			for (Map.Entry<Sensor, List<Target>> entry : map.entrySet()) {
+				Sensor s = entry.getKey();
+				removeSensor = new Sensor(s.getX(), s.getY());
+				sensors.add(new Sensor(s.getX(), s.getY()));
+				List<Target> list = entry.getValue();
+				removeTarget.addAll(list);
+				if(list.size()>=2){
+					b = false;
+					for(int i =0; i<list.size()-1;i++){
+						for(int j=0;j<list.size() ;j++){
+							if(isMidPoint(s, list.get(i), list.get(j))){
+								b=true;
+							}
+						}
+					}
+					if(b==false){
+						sensors.addAll(generateKSensor(s,list));
+					}
+					else {
+						removeTarget.clear();
+					}
+				}else {
+					sensors.addAll(generateKSensor(s, list));
+				}
+				break;
+			}
+			map.remove(removeSensor);
+			Set<Sensor> r = new HashSet<>();
+			for(Target t1 : removeTarget){
+				for (Map.Entry<Sensor, List<Target>> entry : map.entrySet()) {
+					List<Target> t2= entry.getValue();
+					t2.remove(t1);
+					if(t2.size()==0){
+						r.add(entry.getKey());
+					}
+					map.put(entry.getKey(), t2);
+				}
+			}
+			for (Sensor s : r){
+				map.remove(s);
+			}
+		}
+		return sensors;
+	}
+
+	public Set<Sensor> buildSensor2(Set<Target> targets){
+		// sinh các điểm mấu chốt
+		Set<Sensor> sensors = generateSensor1(targets);
+		// tạo map các key là sensor value là list Target nó bảo phủ
+		LinkedHashMap<Sensor, List<Target>> mapSLT=generateMap(sensors);
+		// sinh ra đủ K sensor bao phủ các target đó
+		sensors = generateSensor2(mapSLT);
+		return sensors;
 	}
 }
