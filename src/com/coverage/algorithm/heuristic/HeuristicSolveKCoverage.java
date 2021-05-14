@@ -14,6 +14,7 @@ import java.util.Set;
 import com.coverage.algorithm.Algorithms;
 import com.coverage.algorithm.support.Dijkstra;
 import com.coverage.algorithm.support.EquationCircle;
+import com.coverage.algorithm.support.Hash;
 import com.coverage.distance.EuclidDistance;
 import com.coverage.distance.IDistance;
 import com.coverage.main.KM;
@@ -40,19 +41,20 @@ public class HeuristicSolveKCoverage implements Algorithms{
     public void run(List<Sensor> resultSensors, List<Relay> resultRelays){ 
     	// phase 1, result of phase1 is list of sensors was satisfy k coverage
         //Set<Sensor> sensors = buildSensor(targets);
-		Set<Sensor> sensors = buildSensor2(targets);
+		Set<Sensor> sensors = buildSensor2(targets); // improve build sensor 
+		
         HashMap<Sensor, Integer> mapWS = weightOfSensor(sensors, targets);
         LinkedHashMap<Sensor, Integer> sortedMap = sortHashMapByValue(mapWS);
         sensors = optimalSensor(sortedMap, targets);
-       /*// check set sensor is coverage
-        for(Target t: targets){
-			int w=0;
-			for(Sensor s : sensors){
-				if(t.isCoverage(s)) w++;
-			}
-			System.out.println(w);
-		}
-        */
+//       // check set sensor is coverage
+//        for(Target t: targets){
+//			int w=0;
+//			for(Sensor s : sensors){
+//				if(t.isCoverage(s)) w++;
+//			}
+//			System.out.println(w);
+//		}
+        
         List<Sensor> results = new ArrayList<Sensor>(sensors);		// convert from set to list -end phase 1-
         // show result phase1
         System.out.println("List of sensor satisfy k coverage is : ");
@@ -342,7 +344,7 @@ public class HeuristicSolveKCoverage implements Algorithms{
      * hash two integer
      */
     public int hash(int a, int b) {
-    	return a + b * 127127127;
+    	return Hash.hashCode(a, b);
     }
     
 	/**
@@ -439,7 +441,9 @@ public class HeuristicSolveKCoverage implements Algorithms{
 		return mapWS;
 	}
 
-	// pha 1 mới
+	/**
+	 * New phase1
+	 */
 	public Set<Sensor> generateSensor1(Set<Target> targets) {
 		Set<Sensor> sennors = new HashSet<>();
 		List<Target> targetList = new ArrayList<>();

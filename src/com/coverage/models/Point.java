@@ -1,5 +1,6 @@
 package com.coverage.models;
 
+import com.coverage.algorithm.support.Hash;
 import com.coverage.distance.EuclidDistance;
 import com.coverage.distance.IDistance;
 import com.coverage.main.KM;
@@ -38,13 +39,15 @@ public class Point {
     
     @Override
     public int hashCode() {
-    	return (int) (x + y * 127);
+    	return Hash.hashCode(x, y);
     }
     
     @Override
     public boolean equals(Object obj) {
+    	IDistance distance = new EuclidDistance();
     	if(obj instanceof Point) {
-    		return ((Point) obj).getX() == this.x && ((Point) obj).getY() == this.y;
+//    		return ((Point) obj).getX() == this.x && ((Point) obj).getY() == this.y;
+    		return distance.caculate(this, (Point) obj) < 0.01;
     	}
     	
     	return false;
