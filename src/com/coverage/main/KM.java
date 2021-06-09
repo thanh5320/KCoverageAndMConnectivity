@@ -18,7 +18,7 @@ public class KM {
     // problem parameters
     public static double RC = 50; 				// connection transmission radius
     public static double RS = 40; 				// coverage radius
-    public static int K = 3; 					// constraint coverage
+    public static int K = 4; 					// constraint coverage
     public static Base BASE = new Base(5, 5); // base station
     public static Set<Target> TARGETS; 			// list input target
     public static double ANPHA = 0.4; 			// weigh of relay
@@ -28,6 +28,10 @@ public class KM {
     
 	private List<Sensor> sensors;
     private List<Relay> relays;
+    
+    private Integer numOfSensors;
+    private Integer numOfRelays;
+    private Double cost;
     
     public KM() {
     	sensors = new ArrayList<Sensor>();
@@ -69,7 +73,19 @@ public class KM {
     	Algorithms algorithms = 
     			new HeuristicSolveKCoverage(TARGETS);
     	
-       algorithms.run(sensors, relays);
+    	List<Integer> listResults = new ArrayList<Integer>(); 
+    	algorithms.run(sensors, relays, listResults);
+    	
+    	// some algorithms, i donn't need list of relays, we only need number of relays
+    	// so we need parameter get number of sensors and relays
+    	numOfSensors = listResults.get(0);
+    	numOfRelays = listResults.get(1);
+    	
+    	System.out.println("\nNumber of Sensor : " + numOfSensors);
+    	System.out.println("Number of Relays : " + numOfRelays);
+    	
+    	cost = numOfRelays * KM.ANPHA + numOfSensors * KM.BETA;
+        System.out.println("Cost : " + cost);
        
     }
 
@@ -83,5 +99,16 @@ public class KM {
 	public List<Relay> getRelays() {
 		return relays;
 	}
-    
+
+	public Integer getNumOfSensors() {
+		return numOfSensors;
+	}
+	
+	public Integer getNumOfRelays() {
+		return numOfRelays;
+	} 
+	
+	public Double getCost() {
+		return cost;
+	}
 }

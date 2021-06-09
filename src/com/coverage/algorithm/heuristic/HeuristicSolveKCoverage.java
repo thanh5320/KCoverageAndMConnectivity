@@ -26,7 +26,8 @@ import com.coverage.models.Target;
 
 public class HeuristicSolveKCoverage implements Algorithms{
 	private IDistance distance = 
-			new EuclidDistance();
+			new EuclidDistance();		// function distance
+	
 	private SensorGeneration sensorGeneration = new SensorGeneration();
 	private Set<Target> targets;
 	
@@ -38,14 +39,19 @@ public class HeuristicSolveKCoverage implements Algorithms{
 	 * Run algorithms
 	 */
 	@Override
-    public void run(List<Sensor> resultSensors, List<Relay> resultRelays){ 
+    public void run(List<Sensor> resultSensors, List<Relay> resultRelays, List<Integer> listResults){
+		Integer numOfSensors;
+		Integer numOfRelays;
+		
     	// phase 1, result of phase1 is list of sensors was satisfy k coverage
-        //Set<Sensor> sensors = buildSensor(targets);
-		Set<Sensor> sensors = buildSensor2(targets); // improve build sensor 
+        Set<Sensor> sensors = 
+        		//buildSensor(targets);
+				buildSensor2(targets); // improve build sensor (phase1, step1)
 		
         HashMap<Sensor, Integer> mapWS = weightOfSensor(sensors, targets);
         LinkedHashMap<Sensor, Integer> sortedMap = sortHashMapByValue(mapWS);
         sensors = optimalSensor(sortedMap, targets);
+        
 //       // check set sensor is coverage
 //        for(Target t: targets){
 //			int w=0;
@@ -56,7 +62,11 @@ public class HeuristicSolveKCoverage implements Algorithms{
 //		}
         
         List<Sensor> results = new ArrayList<Sensor>(sensors);		// convert from set to list -end phase 1-
-        // show result phase1
+        // add result sensors 
+        resultSensors.addAll(results);
+        numOfSensors = resultSensors.size();
+        
+        // show result phase1 : list of sensors coverage target
         System.out.println("List of sensor satisfy k coverage is : ");
         Show.printList(results);
         
@@ -68,15 +78,14 @@ public class HeuristicSolveKCoverage implements Algorithms{
 //        for(int key : keySets) {
 //        	List<Integer> list = path.get(key);
 //        	list.forEach(l -> System.out.print(" -> " + l));
+//        	
 ////        	System.out.println(" : " + costOnePath(list, results, distance));
 //        	System.out.println();
 //        }
 //        System.out.println("Cost : " + cost(path, results));
-//        
-//        
 //        System.out.println("\n-----------------\n");
-        System.out.println("Path of each sensor to base satisfy two sensor coverage a same target not same path : \n");
         
+        System.out.println("Path of each sensor to base satisfy two sensor coverage a same target not same path : \n");
         path = checkConstraintConnectivity(path, results);
         keySets = path.keySet();
         
@@ -87,21 +96,19 @@ public class HeuristicSolveKCoverage implements Algorithms{
         	System.out.println();        	
         }
         
-        System.out.println("\nNumber of Sensor : " + results.size());
-        System.out.println("Cost : " + cost(path, results));
+        // add result relays
+        // resultRelays.addAll(results); 
+        numOfRelays = countRelays(path, results);
         
-        // add result sensors and result relays
-        resultSensors.addAll(results);
-        
-        
-        //resultRelays.addAll(results);
-        
+        // add number of sensors and relays
+        listResults.add(numOfSensors);
+        listResults.add(numOfRelays);
     }
 	
 	/**
 	 * the method calculate cost for relays and sensors
 	 */
-	public double cost(Map<Integer, List<Integer>> path, List<Sensor> listSensors) {
+	public int countRelays(Map<Integer, List<Integer>> path, List<Sensor> listSensors) {
 		int numberOfRelays = 0;
 		Map<Integer, Integer> mapPath = new HashMap<Integer, Integer>();
 		
@@ -132,10 +139,13 @@ public class HeuristicSolveKCoverage implements Algorithms{
 		
 		numberOfRelays =(int) ( total / KM.RC + 0.5);
 		
-		System.out.println("\nNumber of relays : " + numberOfRelays);
-		return numberOfRelays * KM.ANPHA + listSensors.size() * KM.BETA;
+//		System.out.println("\nNumber of relays : " + numberOfRelays);
+//		return numberOfRelays * KM.ANPHA + listSensors.size() * KM.BETA;
+		
+		return numberOfRelays;
 	}
 	
+	// bonus function, calculate cost of each path from sensor to base
 	public double costOnePath(List<Integer> list, List<Sensor> listSenSors, IDistance distance) {
 		double total = 0;
 		for(int i=0; i<list.size()-1; i++) {
