@@ -24,7 +24,7 @@ public class GA1Algorithms implements Algorithms{
 	
     private HybridInterface hybird = new HybridCrossoverPoint();
     private MutationInterface mutation = new BitInversionMutation();
-    int repeatLimit = 200;
+    int repeatLimit = 1000;
     
     // corner points of the domain
     private Point topLeftPoint;
@@ -219,7 +219,7 @@ public class GA1Algorithms implements Algorithms{
                 double v2 = e2.getValue();
                 
                 if(v1==v2) return 0;
-                else if(v1>v2) return 1;
+                else if(v1<v2) return 1;
                 else return -1;
             }
         };
@@ -287,7 +287,7 @@ public class GA1Algorithms implements Algorithms{
                     for(int j=0;j<potentialPoints.size();j++){
                         if(chromosome[j]==1 && target.isCoverage(potentialPoints.get(j))){ c++;}
                     }
-                    if(c<=KMGA1.K){ b2 =false; }
+                    if(c<KMGA1.K){ b2 =false; }
                 }
                 if(b2==true){
                     b=true;
@@ -299,9 +299,9 @@ public class GA1Algorithms implements Algorithms{
                     if(nos<nosMin) {nosMin = nos; rs=chromosome;}
                 }
             }
-            
-            potentialPointDistanceX-=10.0/dem;
-            potentialPointDistanceY-=10.0/dem;
+
+            potentialPointDistanceX-=((KMGA1.RS*1.0)/3)/dem;
+            potentialPointDistanceY-=((KMGA1.RS*1.0))/3/dem;
         }
         
 //        System.out.println(nosMin);

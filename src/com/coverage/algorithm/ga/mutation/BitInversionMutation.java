@@ -9,10 +9,10 @@ public class BitInversionMutation implements MutationInterface{
     @Override
     public int[] mutate(int[] chromosome, int len) {
         Random rd = new Random();
-        int nrd = rd.nextInt(len);
-        
-        if(chromosome[nrd]==1) chromosome[nrd] = 0;
-        else chromosome[nrd] = 1;
+        for(int i=0;i<50;i++){
+            int nrd = rd.nextInt(len);
+            chromosome[nrd] = 0;
+        }
         
         return chromosome;
     }
