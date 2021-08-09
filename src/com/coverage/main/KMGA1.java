@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.*;
 
 import com.coverage.algorithm.Algorithms;
-import com.coverage.algorithm.heuristic.HeuristicSolveKCoverage;
+import com.coverage.algorithm.heuristic.HeuristicAlgorithms;
 import com.coverage.models.Base;
 import com.coverage.models.Relay;
 import com.coverage.models.Sensor;

@@ -24,14 +24,14 @@ import com.coverage.models.Relay;
 import com.coverage.models.Sensor;
 import com.coverage.models.Target;
 
-public class HeuristicSolveKCoverage implements Algorithms{
+public class HeuristicAlgorithms implements Algorithms{
 	private IDistance distance = 
 			new EuclidDistance();		// function distance
 	
 	private SensorGeneration sensorGeneration = new SensorGeneration();
 	private Set<Target> targets;
 	
-	public HeuristicSolveKCoverage(Set<Target> targets) {
+	public HeuristicAlgorithms(Set<Target> targets) {
 		this.targets = targets;
 	}
 	
@@ -625,12 +625,15 @@ public class HeuristicSolveKCoverage implements Algorithms{
 	}
 
 	public Set<Sensor> buildSensor2(Set<Target> targets){
-		// sinh các điểm mấu chốt
+		// generate key points
 		Set<Sensor> sensors = generateSensor1(targets);
-		// tạo map các key là sensor value là list Target nó bảo phủ
+		
+		// create a map of keys as sensor value is the list of Target it covers
 		LinkedHashMap<Sensor, List<Target>> mapSLT=generateMap(sensors);
-		// sinh ra đủ K sensor bao phủ các target đó
+		
+		// generate k sensor coverage this target
 		sensors = generateSensor2(mapSLT);
+		
 		return sensors;
 	}
 }

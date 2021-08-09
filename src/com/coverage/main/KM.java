@@ -8,7 +8,8 @@ import java.io.IOException;
 import java.util.*;
 
 import com.coverage.algorithm.Algorithms;
-import com.coverage.algorithm.heuristic.HeuristicSolveKCoverage;
+import com.coverage.algorithm.ga.GA1Algorithms;
+import com.coverage.algorithm.heuristic.HeuristicAlgorithms;
 import com.coverage.models.Base;
 import com.coverage.models.Relay;
 import com.coverage.models.Sensor;
@@ -71,7 +72,8 @@ public class KM {
      */
     public void run() {
     	Algorithms algorithms = 
-    			new HeuristicSolveKCoverage(TARGETS);
+//    			new HeuristicAlgorithms(TARGETS);
+    			new GA1Algorithms(TARGETS);
     	
     	List<Integer> listResults = new ArrayList<Integer>(); 
     	algorithms.run(sensors, relays, listResults);

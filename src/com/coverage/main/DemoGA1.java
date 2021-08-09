@@ -1,11 +1,11 @@
 package com.coverage.main;
 
-import com.coverage.algorithm.ga.GA1;
+import com.coverage.algorithm.ga.GA1Algorithms;
 
 public class DemoGA1 {
     public static void main(String[] args) {
-        GA1 ga1 = new GA1(KMGA1.readFileTarget());
-        ga1.runKConnect();
+        GA1Algorithms ga1 = new GA1Algorithms(KMGA1.readFileTarget());
+        ga1.runKCoverage();
         //ga1.run();
     }
 }
