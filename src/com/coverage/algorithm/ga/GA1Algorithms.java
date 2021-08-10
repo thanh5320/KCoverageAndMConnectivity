@@ -9,7 +9,6 @@ import com.coverage.algorithm.support.Dijkstra;
 import com.coverage.distance.EuclidDistance;
 import com.coverage.distance.IDistance;
 import com.coverage.main.KM;
-import com.coverage.main.KMGA1;
 import com.coverage.main.show.Show;
 import com.coverage.models.Point;
 import com.coverage.models.Relay;
@@ -33,8 +32,8 @@ public class GA1Algorithms implements Algorithms{
     private Point bottomRightPoint;
 
     // distance between potential points
-    private double potentialPointDistanceX=(1.0*KMGA1.RS) / KMGA1.K+10;
-    private double potentialPointDistanceY=(1.0*KMGA1.RS) / KMGA1.K+10;
+    private double potentialPointDistanceX=(1.0*KM.RS) / KM.K+10;
+    private double potentialPointDistanceY=(1.0*KM.RS) / KM.K+10;
     
     // potential point
     private List<Sensor> potentialPoints;
@@ -89,10 +88,10 @@ public class GA1Algorithms implements Algorithms{
         }
         
         // domain will minX, minY, maxX, maxY widen a distance
-        this.bottomLeftPoint=new Point(minX-KMGA1.RS, minY-KMGA1.RS);
-        this.bottomRightPoint=new Point(maxX+KMGA1.RS, minY-KMGA1.RS);
-        this.topLeftPoint=new Point(minX-KMGA1.RS, maxY+KMGA1.RS);
-        this.topRightPoint=new Point(maxX+KMGA1.RS, maxY+KMGA1.RS);
+        this.bottomLeftPoint=new Point(minX-KM.RS, minY-KM.RS);
+        this.bottomRightPoint=new Point(maxX+KM.RS, minY-KM.RS);
+        this.topLeftPoint=new Point(minX-KM.RS, maxY+KM.RS);
+        this.topRightPoint=new Point(maxX+KM.RS, maxY+KM.RS);
     }
 
     // create potential point
@@ -192,12 +191,12 @@ public class GA1Algorithms implements Algorithms{
             for(int i=0;i<p;i++){
                 if(individual[i]==1 && target.isCoverage(potentialPoints.get(i))) c++;
             }
-            if(c>=KMGA1.K) sumCovCost +=KMGA1.K;
-            else sumCovCost+=KMGA1.K-c;
+            if(c>=KM.K) sumCovCost +=KM.K;
+            else sumCovCost+=KM.K-c;
         }
 
         // F2, objective maximize F2
-        double f2 = (1.0/(targets.size()*KMGA1.K))*sumCovCost;
+        double f2 = (1.0/(targets.size()*KM.K))*sumCovCost;
         
         // Fitness = W1 * (1 - F1) + W2 * F2
         double fitness = w1*(1.0-f1) + w2*f2;
@@ -264,8 +263,8 @@ public class GA1Algorithms implements Algorithms{
     public void runKCoverage(){
     	rs = null; // chromosome result  
     	
-    	potentialPointDistanceX=KMGA1.RS;
-        potentialPointDistanceY=KMGA1.RS;
+    	potentialPointDistanceX=KM.RS;
+        potentialPointDistanceY=KM.RS;
         
         int nosMin = Integer.MAX_VALUE;
         
@@ -287,7 +286,7 @@ public class GA1Algorithms implements Algorithms{
                     for(int j=0;j<potentialPoints.size();j++){
                         if(chromosome[j]==1 && target.isCoverage(potentialPoints.get(j))){ c++;}
                     }
-                    if(c<KMGA1.K){ b2 =false; }
+                    if(c<KM.K){ b2 =false; }
                 }
                 if(b2==true){
                     b=true;
@@ -300,8 +299,8 @@ public class GA1Algorithms implements Algorithms{
                 }
             }
 
-            potentialPointDistanceX-=((KMGA1.RS*1.0)/3)/dem;
-            potentialPointDistanceY-=((KMGA1.RS*1.0))/3/dem;
+            potentialPointDistanceX-=((KM.RS*1.0)/3)/dem;
+            potentialPointDistanceY-=((KM.RS*1.0))/3/dem;
         }
         
 //        System.out.println(nosMin);
