@@ -17,15 +17,16 @@ import com.coverage.models.Target;
 
 public class KM {
     // problem parameters
-    public static double RC = 50; 				// connection transmission radius
     public static double RS = 40; 				// coverage radius
-    public static int K = 4; 					// constraint coverage
+    public static double RC = RS * 2; 				// connection transmission radius
+    public static int K = 8; 					// constraint coverage
     public static Base BASE = new Base(5, 5); // base station
     public static Set<Target> TARGETS; 			// list input target
     public static double ANPHA = 0.4; 			// weigh of relay
     public static double BETA = 0.6; 			// weigh of sensor
     
-	public static final String url = "resources/target.txt";
+	private String url = "resources/target.txt";
+	private int nAlgorithm;
     
 	private List<Sensor> sensors;
     private List<Relay> relays;
@@ -34,7 +35,10 @@ public class KM {
     private Integer numOfRelays;
     private Double cost;
     
-    public KM() {
+    public KM(String url, int nAlgorithm) {
+    	this.url = url;
+    	this.nAlgorithm = nAlgorithm;
+    	
     	sensors = new ArrayList<Sensor>();
     	relays = new ArrayList<Relay>();
     	TARGETS = readFileTarget();
@@ -43,9 +47,9 @@ public class KM {
     /**
      * Read input target
      */
-    public static Set<Target> readFileTarget(){
+    public Set<Target> readFileTarget(){
         Set<Target> targets = new HashSet<>();
-        File file = new File(url);
+        File file = new File(this.url);
         BufferedReader reader=null;
         try {
              reader= new BufferedReader(new FileReader(file));
@@ -71,9 +75,14 @@ public class KM {
      * Main function, run and find sensors and relays with k coverage and m connectivity
      */
     public void run() {
-    	Algorithms algorithms = 
-//    			new HeuristicAlgorithms(TARGETS);
-    			new GA1Algorithms(TARGETS);
+    	Algorithms algorithms = null;
+    	if(this.nAlgorithm == 1) {
+    		algorithms = new HeuristicAlgorithms(TARGETS, false); // heuristic 
+    	} else if(this.nAlgorithm == 2) {
+    		algorithms = new HeuristicAlgorithms(TARGETS, true); // heuristic improve
+    	} else {
+    		algorithms = new GA1Algorithms(TARGETS); // GA
+    	}
     	
     	List<Integer> listResults = new ArrayList<Integer>(); 
     	algorithms.run(sensors, relays, listResults);

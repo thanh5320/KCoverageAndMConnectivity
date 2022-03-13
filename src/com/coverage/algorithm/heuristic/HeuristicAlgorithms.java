@@ -25,14 +25,18 @@ import com.coverage.models.Sensor;
 import com.coverage.models.Target;
 
 public class HeuristicAlgorithms implements Algorithms{
-	private IDistance distance = 
-			new EuclidDistance();		// function distance
+	private IDistance distance = new EuclidDistance();		// function distance
 	
 	private SensorGeneration sensorGeneration = new SensorGeneration();
 	private Set<Target> targets;
 	
-	public HeuristicAlgorithms(Set<Target> targets) {
+	// default is false: use algorithms 1
+	// true: use improve algorithm
+	private boolean isImproveAlgorithm = false;
+	
+	public HeuristicAlgorithms(Set<Target> targets, boolean improve) {
 		this.targets = targets;
+		this.isImproveAlgorithm = improve;
 	}
 	
 	/**
@@ -44,9 +48,13 @@ public class HeuristicAlgorithms implements Algorithms{
 		Integer numOfRelays;
 		
     	// phase 1, result of phase1 is list of sensors was satisfy k coverage
-        Set<Sensor> sensors = 
-        		//buildSensor(targets);
-				buildSensor2(targets); // improve build sensor (phase1, step1)
+		Set<Sensor> sensors = null;
+		if(this.isImproveAlgorithm) {
+			sensors = buildSensor2(targets); // improve build sensor (phase1, step1)
+		} else {
+			sensors = buildSensor(targets);
+		}
+        
 		
         HashMap<Sensor, Integer> mapWS = weightOfSensor(sensors, targets);
         LinkedHashMap<Sensor, Integer> sortedMap = sortHashMapByValue(mapWS);
@@ -61,7 +69,9 @@ public class HeuristicAlgorithms implements Algorithms{
 //			System.out.println(w);
 //		}
         
-        List<Sensor> results = new ArrayList<Sensor>(sensors);		// convert from set to list -end phase 1-
+        List<Sensor> results = new ArrayList<Sensor>(sensors); // convert from set to list 
+        // -end phase 1-
+        
         // add result sensors 
         resultSensors.addAll(results);
         numOfSensors = resultSensors.size();
